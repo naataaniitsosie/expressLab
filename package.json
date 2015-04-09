@@ -1,0 +1,19 @@
+{
+	"author" : "fireaxil",
+	"name" : "nodejslab.fireaxil",
+	"version" : "0.1.2",
+	"description" : "Basic Static HTTP Server",
+	"main" : "http_sever_static",
+	"repository" : {
+		"type" : "git",
+		"url" : "http://github.com/naataaniitsosie/nodejsLab.git"
+	},
+	"keywords": [
+		"Node.js",
+		"Lab"
+	],
+	"dependencies" : {},
+	"engines" : {
+		"node" : "*"
+	}
+}

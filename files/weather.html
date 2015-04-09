@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>City Finder</title>
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+		<script>
+			$(document).ready(function(){
+				$("#submitCommentButton").click(function(){
+					var myobj = {
+							Name: $("#Name").val(),
+							Comment: $("#Comment").val()
+						};
+					jobj = JSON.stringify(myobj);
+					$("#json").text(jobj);
+
+					var url = "http://54.173.180.106/comment";
+					jQuery.ajax({
+						url: url,
+						type: "POST",
+						data: jobj,
+						contentType: "application/json; charset=utf-8",
+						success: function(){
+							$("#json").append("<br>Success");
+						}
+					});
+				});
+				$("#showCommentsButton").click(function(){			
+					var url = "http://54.173.180.106/comment";
+					$.getJSON(url, function(data){
+						var everything;
+						everything = "<ul>";
+						$.each(data, function(i, item) {
+							everything += "<li> Name: " + data[i].Name + " Comment: " + data[i].Comment;
+						});
+						everything += "</ul>";
+						$("#currentComments").html(everything);
+					});
+				});
+			});
+		</script>
+
+	</head>
+	<body>
+		<h2>Jquery/AJAX Lab</h2>	
+		<form>
+			Enter A Utah City: <input type="text" id="cityfield" value=""><br>
+			Suggestion: <span id="txtHint"></span>
+			<input id="button" type="submit" value="Submit">
+		</form>
+		<p>City</p>
+		<textarea id="dispcity">No City</textarea>
+		<p>Current Weather</p>
+		<div id="weather">No weather</div>
+
+		</form>
+		<br>
+		<h2>Mongo Lab</h2>
+		<br>
+		<br>
+		<form id="commentForm" action="">
+			Name: <input type="text" id="Name" value="Mickey"><br>
+			Comment: <input type="text" id="Comment" value="Hello"><br>
+		</form>
+
+		<button id="submitCommentButton">Submit Comment</button>
+		<button id="showCommentsButton">Show Comments</button>
+
+		<div id="json"></div>
+		<br>
+		Current Comments:
+		
+
+		<div id="currentComments"></div>
+		
+		<script>
+			$( "#cityfield" ).keyup(function () {
+			
+				var url = "http://54.173.180.106/getcity?q=" + $("#cityfield").val();
+				jQuery.getJSON(url, function (data) {
+					
+					var everything;
+					everything = "<ul>";
+					$.each(data, function (i, item) {
+						everything += "<li> " + data[i].city;
+					});
+					everything += "</ul>";
+					$("#txtHint").html(everything);
+					
+				})
+				.done(function () {
+					console.log('getJSON request succeeded!');
+				})
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					console.log('getJSON request failed! ' + textStatus);
+					console.log("incoming "+jqXHR.responseText);
+				})
+				.always(function () {
+					console.log('getJSON request ended!');
+				})
+				.complete(function () {
+					console.log("complete");
+				});
+				
+			});
+			
+			$("#button").click(function(e){
+			
+				var value = $("#cityfield").val();
+				$("#dispcity").text(value);
+				e.preventDefault();
+				
+				var myurl= "https://api.wunderground.com/api/2a0b29d2cd0e5e57/geolookup/conditions/q/UT/";
+				myurl += value;
+				myurl += ".json";
+				
+				$.ajax({
+					url : myurl,
+					dataType : "jsonp",
+					success : function (parsed_json) {
+						var location = parsed_json['location']['city'];
+						var temp_string = parsed_json['current_observation']['temperature_string'];
+						var feels_like_string = parsed_json['current_observation']['feelslike_string'];
+						var current_weather = parsed_json['current_observation']['weather'];
+						everything = "<ul>";
+						everything += "<li>Location: " + location;
+						everything += "<li>Temperature: " + temp_string;
+						everything += "<li>Feels Like: " + feels_like_string;
+						everything += "<li>Weather: " + current_weather;
+						everything += "</ul>";
+						$("#weather").html(everything);
+					}
+				});
+			});		
+		</script>
+		
+	</body>
+</html>
